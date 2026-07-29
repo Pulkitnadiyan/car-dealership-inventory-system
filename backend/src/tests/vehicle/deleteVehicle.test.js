@@ -1,7 +1,7 @@
 const request = require("supertest");
 const app = require("../../app");
 const prisma = require("../../config/prisma");
-const getAuthToken = require("../helpers/getAuthToken");
+const getAdminToken = require("../helpers/getAdminToken");
 
 describe("DELETE /api/vehicles/:id", () => {
 
@@ -29,7 +29,7 @@ describe("DELETE /api/vehicles/:id", () => {
 
     it("should delete a vehicle", async () => {
 
-        const token = await getAuthToken();
+        const token = await getAdminToken();
 
         const response = await request(app)
             .delete(`/api/vehicles/${vehicle.id}`)
