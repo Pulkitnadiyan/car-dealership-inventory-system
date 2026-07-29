@@ -3,14 +3,22 @@ const authRepository = require("../repositories/authRepository");
 
 const register = async (userData) => {
 
+    const existingUser = await authRepository.findUserByEmail(
+        userData.email
+    );
+
+    if (existingUser) {
+        throw new Error("EMAIL_EXISTS");
+    }
+
     const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     return authRepository.createUser({
         ...userData,
-        password: hashedPassword
+        password: hashedPassword,
     });
 };
 
 module.exports = {
-    register
+    register,
 };
