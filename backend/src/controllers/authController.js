@@ -28,7 +28,40 @@ const register = async (req, res) => {
     }
 
 };
+const login = async (req, res) => {
+
+    try {
+
+        const token = await authService.login(
+            req.body.email,
+            req.body.password
+        );
+
+        return res.status(200).json({
+            success: true,
+            token
+        });
+
+    } catch (error) {
+
+        if (error.message === "INVALID_CREDENTIALS") {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
 
 module.exports = {
     register,
+    login
 };
+
