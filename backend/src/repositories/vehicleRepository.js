@@ -21,8 +21,14 @@ const updateVehicle = async (id, vehicleData) => {
         data: vehicleData
     });
 };
-
+const deleteVehicle = async (id) => {
+    return prisma.vehicle.delete({
+        where: {
+            id: Number(id)
+        }
+    });
+};
 
 module.exports = {
-    createVehicle, getAllVehicles, searchVehicles, updateVehicle
+    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle
 };

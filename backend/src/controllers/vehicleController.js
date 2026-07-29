@@ -79,6 +79,28 @@ const updateVehicle = async (req, res) => {
     }
 
 };
+const deleteVehicle = async (req, res) => {
+
+    try {
+
+        await vehicleService.deleteVehicle(req.params.id);
+
+        return res.status(200).json({
+            success: true,
+            message: "Vehicle deleted successfully"
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
+
 module.exports = {
-    createVehicle, getAllVehicles, searchVehicles, updateVehicle
+    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle
 };
