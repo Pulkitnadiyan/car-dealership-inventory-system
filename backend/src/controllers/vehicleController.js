@@ -135,7 +135,28 @@ const purchaseVehicle = async (req, res) => {
     }
 
 };
+const restockVehicle = async (req, res) => {
+
+    try {
+
+        const vehicle = await vehicleService.restockVehicle(
+            req.params.id,
+            req.body.quantity
+        );
+
+        return res.status(200).json(vehicle);
+
+    } catch (error) {
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
 
 module.exports = {
-    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle, purchaseVehicle
+    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle, purchaseVehicle, restockVehicle
 };
