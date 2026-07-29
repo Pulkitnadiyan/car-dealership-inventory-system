@@ -28,7 +28,32 @@ const deleteVehicle = async (id) => {
         }
     });
 };
+const purchaseVehicle = async (id) => {
 
+    const vehicle = await prisma.vehicle.findUnique({
+        where: {
+            id: Number(id)
+        }
+    });
+
+    if (!vehicle) {
+        throw new Error("VEHICLE_NOT_FOUND");
+    }
+
+    if (vehicle.quantity <= 0) {
+        throw new Error("OUT_OF_STOCK");
+    }
+
+    return prisma.vehicle.update({
+        where: {
+            id: Number(id)
+        },
+        data: {
+            quantity: vehicle.quantity - 1
+        }
+    });
+
+};
 module.exports = {
-    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle
+    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle, purchaseVehicle
 };

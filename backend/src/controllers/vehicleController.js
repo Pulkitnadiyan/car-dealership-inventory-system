@@ -22,6 +22,7 @@ const createVehicle = async (req, res) => {
 
 };
 
+
 const getAllVehicles = async (req, res) => {
 
     try {
@@ -100,7 +101,41 @@ const deleteVehicle = async (req, res) => {
     }
 
 };
+const purchaseVehicle = async (req, res) => {
+
+    try {
+
+        const vehicle = await vehicleService.purchaseVehicle(
+            req.params.id
+        );
+
+        return res.status(200).json(vehicle);
+
+    } catch (error) {
+
+        if (error.message === "OUT_OF_STOCK") {
+            return res.status(400).json({
+                success: false,
+                message: "Vehicle is out of stock"
+            });
+        }
+
+        if (error.message === "VEHICLE_NOT_FOUND") {
+            return res.status(404).json({
+                success: false,
+                message: "Vehicle not found"
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
 
 module.exports = {
-    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle
+    createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle, purchaseVehicle
 };
