@@ -13,7 +13,16 @@ const searchVehicles = async (filters) => {
         where: filters
     });
 };
+const updateVehicle = async (id, vehicleData) => {
+    return prisma.vehicle.update({
+        where: {
+            id: Number(id)
+        },
+        data: vehicleData
+    });
+};
+
 
 module.exports = {
-    createVehicle, getAllVehicles, searchVehicles
+    createVehicle, getAllVehicles, searchVehicles, updateVehicle
 };

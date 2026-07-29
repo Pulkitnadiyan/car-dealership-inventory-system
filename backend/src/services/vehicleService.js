@@ -26,8 +26,12 @@ const searchVehicles = async (query) => {
     return vehicleRepository.searchVehicles(filters);
 
 };
+const updateVehicle = async (id, vehicleData) => {
+    return vehicleRepository.updateVehicle(id, vehicleData);
+};
 module.exports = {
     createVehicle,
     getAllVehicles,
-    searchVehicles
+    searchVehicles,
+    updateVehicle
 };
