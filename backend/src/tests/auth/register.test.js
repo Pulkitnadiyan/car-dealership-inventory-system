@@ -52,9 +52,7 @@ describe("POST /api/auth/register", () => {
         });
 
         expect(user).not.toBeNull();
-
         expect(user.password).not.toBe(plainPassword);
-
 
         const isMatch = await bcrypt.compare(
             plainPassword,
@@ -62,6 +60,32 @@ describe("POST /api/auth/register", () => {
         );
 
         expect(isMatch).toBe(true);
+    });
+
+    it("should not allow duplicate email registration", async () => {
+
+        const user = {
+            username: "Pulkit",
+            email: "pulkit@example.com",
+            password: "password123"
+        };
+
+
+        await request(app)
+            .post("/api/auth/register")
+            .send(user);
+
+
+        const response = await request(app)
+            .post("/api/auth/register")
+            .send(user);
+
+        expect(response.status).toBe(409);
+        expect(response.body).toEqual({
+            success: false,
+            message: "Email already exists"
+        });
+
     });
 
 });
