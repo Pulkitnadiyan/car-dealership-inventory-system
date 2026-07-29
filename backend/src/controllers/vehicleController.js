@@ -40,8 +40,25 @@ const getAllVehicles = async (req, res) => {
     }
 
 };
+const searchVehicles = async (req, res) => {
 
+    try {
+
+        const vehicles = await vehicleService.searchVehicles(req.query);
+
+        return res.status(200).json(vehicles);
+
+    } catch {
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
 
 module.exports = {
-    createVehicle, getAllVehicles
+    createVehicle, getAllVehicles, searchVehicles
 };

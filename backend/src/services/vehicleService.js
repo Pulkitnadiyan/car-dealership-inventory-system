@@ -7,7 +7,27 @@ const getAllVehicles = async () => {
     return vehicleRepository.getAllVehicles();
 };
 
+const searchVehicles = async (query) => {
+
+    const filters = {};
+
+    if (query.make) {
+        filters.make = query.make;
+    }
+
+    if (query.model) {
+        filters.model = query.model;
+    }
+
+    if (query.category) {
+        filters.category = query.category;
+    }
+
+    return vehicleRepository.searchVehicles(filters);
+
+};
 module.exports = {
     createVehicle,
-    getAllVehicles
+    getAllVehicles,
+    searchVehicles
 };
