@@ -7,10 +7,11 @@ const controller = require("../controllers/vehicleController");
 
 const { createVehicle, getAllVehicles, searchVehicles, updateVehicle, deleteVehicle } = controller;
 
-router.post("/", createVehicle);
+const authenticate = require("../middlewares/authMiddleware");
+router.post("/", authenticate, createVehicle);
 router.get("/", getAllVehicles);
 router.get("/search", searchVehicles);
-router.put("/:id", updateVehicle);
-router.delete("/:id", deleteVehicle);
+router.put("/:id", authenticate, updateVehicle);
+router.delete("/:id", authenticate, deleteVehicle);
 
 module.exports = router;

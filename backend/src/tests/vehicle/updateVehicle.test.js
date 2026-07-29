@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../../app");
 const prisma = require("../../config/prisma");
+const getAuthToken = require("../helpers/getAuthToken");
 
 describe("PUT /api/vehicles/:id", () => {
 
@@ -25,9 +26,10 @@ describe("PUT /api/vehicles/:id", () => {
     });
 
     it("should update a vehicle", async () => {
-
+        const token = await getAuthToken();
         const response = await request(app)
             .put(`/api/vehicles/${vehicle.id}`)
+            .set("Authorization", `Bearer ${token}`)
             .send({
                 price: 5000000,
                 quantity: 8

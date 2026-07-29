@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../../app");
 const prisma = require("../../config/prisma");
+const getAuthToken = require("../helpers/getAuthToken");
 
 describe("POST /api/vehicles", () => {
 
@@ -14,8 +15,11 @@ describe("POST /api/vehicles", () => {
 
     it("should create a vehicle", async () => {
 
+        const token = await getAuthToken();
+
         const response = await request(app)
             .post("/api/vehicles")
+            .set("Authorization", `Bearer ${token}`)
             .send({
                 make: "Toyota",
                 model: "Fortuner",
