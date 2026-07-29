@@ -87,5 +87,42 @@ describe("POST /api/auth/register", () => {
         });
 
     });
+    it("should return 400 if username is missing", async () => {
+
+        const response = await request(app)
+            .post("/api/auth/register")
+            .send({
+                email: "test@example.com",
+                password: "password123"
+            });
+
+        expect(response.status).toBe(400);
+    });
+
+    it("should return 400 for invalid email", async () => {
+
+        const response = await request(app)
+            .post("/api/auth/register")
+            .send({
+                username: "Pulkit",
+                email: "invalid-email",
+                password: "password123"
+            });
+
+        expect(response.status).toBe(400);
+    });
+
+    it("should return 400 if password is shorter than 6 characters", async () => {
+
+        const response = await request(app)
+            .post("/api/auth/register")
+            .send({
+                username: "Pulkit",
+                email: "pulkit@example.com",
+                password: "123"
+            });
+
+        expect(response.status).toBe(400);
+    });
 
 });
