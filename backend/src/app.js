@@ -1,16 +1,20 @@
 const express = require("express");
 const cors = require("cors");
 
-const app = express();
+const authRoutes = require("./routes/authRoutes");
 
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
     res.json({
         success: true,
-        message: "car Dealership API Running"
+        message: "Car Dealership API Running"
     });
 });
+
+app.use("/api/auth", authRoutes);
+
 module.exports = app;
