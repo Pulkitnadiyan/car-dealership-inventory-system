@@ -1,4 +1,5 @@
 const request = require("supertest");
+const bcrypt = require("bcrypt");
 const app = require("../../app");
 const prisma = require("../../config/prisma");
 
@@ -30,6 +31,37 @@ describe("POST /api/auth/register", () => {
 
         expect(user).not.toBeNull();
         expect(user.email).toBe("pulkit@example.com");
+    });
+
+    it("should hash the password before saving", async () => {
+
+        const plainPassword = "password123";
+
+        await request(app)
+            .post("/api/auth/register")
+            .send({
+                username: "Rahul",
+                email: "rahul@example.com",
+                password: plainPassword
+            });
+
+        const user = await prisma.user.findUnique({
+            where: {
+                email: "rahul@example.com"
+            }
+        });
+
+        expect(user).not.toBeNull();
+
+        expect(user.password).not.toBe(plainPassword);
+
+
+        const isMatch = await bcrypt.compare(
+            plainPassword,
+            user.password
+        );
+
+        expect(isMatch).toBe(true);
     });
 
 });
