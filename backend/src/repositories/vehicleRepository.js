@@ -5,7 +5,10 @@ const createVehicle = async (vehicleData) => {
         data: vehicleData
     });
 };
+const getAllVehicles = async () => {
+    return prisma.vehicle.findMany();
+};
 
 module.exports = {
-    createVehicle
+    createVehicle, getAllVehicles
 };

@@ -22,6 +22,26 @@ const createVehicle = async (req, res) => {
 
 };
 
+const getAllVehicles = async (req, res) => {
+
+    try {
+
+        const vehicles = await vehicleService.getAllVehicles();
+
+        return res.status(200).json(vehicles);
+
+    } catch {
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+
+    }
+
+};
+
+
 module.exports = {
-    createVehicle
+    createVehicle, getAllVehicles
 };

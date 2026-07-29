@@ -5,8 +5,9 @@ const controller = require("../controllers/vehicleController");
 
 
 
-const { createVehicle } = controller;
+const { createVehicle, getAllVehicles } = controller;
 
 router.post("/", createVehicle);
+router.get("/", getAllVehicles);
 
 module.exports = router;
