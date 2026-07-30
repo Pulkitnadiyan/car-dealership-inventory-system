@@ -12,11 +12,15 @@ function Login() {
                 <form className="space-y-4">
 
                     <div>
-                        <label className="block mb-2 font-medium">
+                        <label
+                            htmlFor="email"
+                            className="block mb-2 font-medium"
+                        >
                             Email
                         </label>
 
                         <input
+                            id="email"
                             type="email"
                             placeholder="Enter email"
                             className="w-full border rounded-lg px-4 py-2"
@@ -24,11 +28,15 @@ function Login() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 font-medium">
+                        <label
+                            htmlFor="password"
+                            className="block mb-2 font-medium"
+                        >
                             Password
                         </label>
 
                         <input
+                            id="password"
                             type="password"
                             placeholder="Enter password"
                             className="w-full border rounded-lg px-4 py-2"
