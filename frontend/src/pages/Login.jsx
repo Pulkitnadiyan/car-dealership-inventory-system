@@ -2,25 +2,37 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { loginUser } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const auth = useAuth();
+    const login = auth?.login;
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(null);
 
-        const response = await loginUser({
-            email,
-            password
-        });
+        try {
+            const response = await loginUser({
+                email,
+                password
+            });
 
-        localStorage.setItem(
-            "token",
-            response.data.token
-        );
-        navigate("/");
+            localStorage.setItem(
+                "token",
+                response.data.token
+            );
+            if (login) {
+                login(response.data.token);
+            }
+            navigate("/");
+        } catch (err) {
+            setError(err.response?.data?.message || "Invalid email or password");
+        }
     };
 
     return (
@@ -30,6 +42,12 @@ function Login() {
                 <h1 className="text-3xl font-bold text-center mb-6">
                     Car Dealership
                 </h1>
+
+                {error && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-semibold mb-4 text-center border border-red-100">
+                        {error}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 

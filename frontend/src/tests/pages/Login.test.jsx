@@ -129,4 +129,26 @@ describe("Login Page", () => {
         expect(mockNavigate).toHaveBeenCalledWith("/");
 
     });
+
+    it("should display error message on login failure", async () => {
+        loginUser.mockRejectedValue({
+            response: {
+                data: {
+                    message: "Invalid email or password"
+                }
+            }
+        });
+
+        render(
+            <BrowserRouter>
+                <Login />
+            </BrowserRouter>
+        );
+
+        await userEvent.type(screen.getByLabelText(/email/i), "wrong@example.com");
+        await userEvent.type(screen.getByLabelText(/password/i), "wrongpass");
+        await userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+        expect(await screen.findByText(/invalid email or password/i)).toBeInTheDocument();
+    });
 });

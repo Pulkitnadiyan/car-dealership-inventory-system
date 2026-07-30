@@ -215,4 +215,59 @@ describe("Home Page - Vehicle Listing & Search", () => {
             expect(screen.getByText("In Stock: 4")).toBeInTheDocument();
         });
     });
+
+    it("should filter results by min and max price range", async () => {
+        const dummyVehicles = [
+            {
+                id: 1,
+                make: "Toyota",
+                model: "Corolla",
+                category: "Sedan",
+                price: 20000,
+                quantity: 5,
+            },
+            {
+                id: 2,
+                make: "Ford",
+                model: "Mustang",
+                category: "Sports",
+                price: 45000,
+                quantity: 2,
+            },
+            {
+                id: 3,
+                make: "BMW",
+                model: "M3",
+                category: "Sports",
+                price: 70000,
+                quantity: 1,
+            },
+        ];
+
+        getVehicles.mockResolvedValue({ data: dummyVehicles });
+
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota Corolla");
+        await screen.findByText("Ford Mustang");
+        await screen.findByText("BMW M3");
+
+        // Input min and max price
+        await userEvent.type(screen.getByPlaceholderText(/min price/i), "30000");
+        await userEvent.type(screen.getByPlaceholderText(/max price/i), "60000");
+
+        // Submit search
+        await userEvent.click(screen.getByRole("button", { name: /search/i }));
+
+        await waitFor(() => {
+            expect(screen.getByText("Ford Mustang")).toBeInTheDocument();
+            expect(screen.queryByText("Toyota Corolla")).not.toBeInTheDocument();
+            expect(screen.queryByText("BMW M3")).not.toBeInTheDocument();
+        });
+    });
 });
+
