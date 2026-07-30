@@ -1,11 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "../../pages/Home";
-import { getVehicles } from "../../services/vehicleService";
+import { getVehicles, searchVehicles } from "../../services/vehicleService";
 
 vi.mock("../../services/vehicleService", () => ({
     getVehicles: vi.fn(),
+    searchVehicles: vi.fn(),
 }));
 
 vi.mock("../../context/AuthContext", () => ({
@@ -15,7 +17,7 @@ vi.mock("../../context/AuthContext", () => ({
     })),
 }));
 
-describe("Home Page - Vehicle Listing", () => {
+describe("Home Page - Vehicle Listing & Search", () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
@@ -84,6 +86,59 @@ describe("Home Page - Vehicle Listing", () => {
             expect(screen.getByText("Category: Sports")).toBeInTheDocument();
             expect(screen.getByText("$45000")).toBeInTheDocument();
             expect(screen.getByText("In Stock: 2")).toBeInTheDocument();
+        });
+    });
+
+    it("should call searchVehicles service and render filtered results when user searches", async () => {
+        const dummyVehicles = [
+            {
+                id: 1,
+                make: "Toyota",
+                model: "Corolla",
+                category: "Sedan",
+                price: 20000,
+                quantity: 5,
+            },
+        ];
+        const searchResults = [
+            {
+                id: 1,
+                make: "Toyota",
+                model: "Corolla",
+                category: "Sedan",
+                price: 20000,
+                quantity: 5,
+            },
+        ];
+
+        getVehicles.mockResolvedValue({ data: dummyVehicles });
+        searchVehicles.mockResolvedValue({ data: searchResults });
+
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        // Wait for initial load
+        await screen.findByText("Toyota Corolla");
+
+        // Type search criteria
+        await userEvent.type(screen.getByPlaceholderText(/search by make/i), "Toyota");
+        await userEvent.type(screen.getByPlaceholderText(/search by model/i), "Corolla");
+        await userEvent.type(screen.getByPlaceholderText(/search by category/i), "Sedan");
+
+        // Click search button
+        await userEvent.click(screen.getByRole("button", { name: /search/i }));
+
+        expect(searchVehicles).toHaveBeenCalledWith({
+            make: "Toyota",
+            model: "Corolla",
+            category: "Sedan",
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText("Toyota Corolla")).toBeInTheDocument();
         });
     });
 });
