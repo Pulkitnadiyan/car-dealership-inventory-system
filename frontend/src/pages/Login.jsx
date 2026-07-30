@@ -6,9 +6,18 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        await loginUser({ email, password });
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const response = await loginUser({
+            email,
+            password
+        });
+
+        localStorage.setItem(
+            "token",
+            response.data.token
+        );
     };
 
     return (
