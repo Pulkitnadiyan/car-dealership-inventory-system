@@ -1,162 +1,421 @@
 # Car Dealership Inventory System
 
-A full-stack vehicle inventory management and search application built with a **React + Tailwind CSS** frontend and an **Express + Prisma + PostgreSQL** backend. The system features user authentication, a public dealership marketplace with price filtering and vehicle purchasing, and a protected administrative control panel for CRUD inventory management and restocking.
+A full-stack Car Dealership Inventory System that enables customers to browse, search, and purchase vehicles while providing administrators with a secure dashboard for inventory management. Built using **React**, **Express.js**, **Prisma ORM**, **PostgreSQL**, and **JWT Authentication**, with development following a **Test-Driven Development (TDD)** workflow.
 
 ---
 
-## Final UI Redesign Preview
+## 📸 Application Preview
 
-![Dealership Marketplace Mockup](screenshot.png)
-*(Save a screenshot of your local running application as `screenshot.png` in this root directory to render it here)*
+<table>
+<tr>
+<td align="center"><b>🏠 Home Page</b></td>
+<td align="center"><b>🛠️ Admin Dashboard</b></td>
+</tr>
+
+<tr>
+<td>
+<img src="screenshots/home.png" width="500"/>
+</td>
+
+<td>
+<img src="screenshots/admin-dashboard.png" width="500"/>
+</td>
+</tr>
+
+<tr>
+<td align="center"><b>🔐 Login</b></td>
+<td align="center"><b>📝 Register</b></td>
+</tr>
+
+<tr>
+<td>
+<img src="screenshots/login.png" width="500"/>
+</td>
+
+<td>
+<img src="screenshots/register.png" width="500"/>
+</td>
+</tr>
+
+</table>
 
 ---
 
-## Features
+## 🚀 Features
 
-### 🚗 Dealership Marketplace (Home)
-- **Compact Filter Panel**: Instantly search cars by Make, Model, Category, and Min/Max Price Range on a single row.
-- **Automotive UI Cards**: Cards dynamically render category-based SVG silhouettes (Sedan, SUV, Sports cars) instead of boring placeholders.
-- **Price Formatting**: Prices are displayed in standard Indian Rupee format (e.g., `₹45,00,000` / `₹20,000`).
-- **Dynamic Stock Indicators**: Stock levels change colors dynamically based on availability.
-- **One-Click Purchase**: Authenticated users can buy vehicles instantly, which decrements stock in real-time.
+### 🚗 Dealership Marketplace
+
+- Browse all available vehicles.
+- Search vehicles by:
+  - Make
+  - Model
+  - Category
+  - Minimum Price
+  - Maximum Price
+- Dynamic inventory cards with category-specific vehicle silhouettes.
+- Indian Rupee price formatting.
+- Stock status badges with dynamic colors.
+- Purchase vehicles with real-time stock updates.
+- Purchase button automatically disables when stock reaches zero.
 
 ### 🛡️ Administrative Portal
-- **Internal Panel Styling**: Styled as a clean control panel focusing on data density and usability.
-- **Dual-Column Layout**: Left-aligned Title Case forms for Add/Edit actions and right-aligned inventory tables.
-- **Compact Management Rows**: Reduced vertical spacing (`py-2`) to maximize visibility.
-- **Restock Controls**: Add stock directly inline.
-- **Delete Safe-Guards**: Triggers a confirmation dialog (`window.confirm`) to prevent accidental clicks.
+
+- Secure Admin Dashboard.
+- Add new vehicles.
+- Update existing vehicles.
+- Delete vehicles.
+- Restock inventory.
+- Delete confirmation dialog to prevent accidental deletion.
+- Compact inventory management table for improved readability.
 
 ---
 
-## Project Structure
+## 🔐 Authentication
+
+- User Registration
+- User Login
+- JWT Authentication
+- Protected Routes
+- Admin-only Dashboard
+- Persistent Login using Local Storage
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
+- React Context API
+- Vitest
+- React Testing Library
+
+### Backend
+
+- Node.js
+- Express.js
+- Prisma ORM
+- PostgreSQL
+- JWT Authentication
+- bcrypt
+
+### Development Tools
+
+- Git
+- GitHub
+- Prisma Studio
+
+---
+
+## 📂 Project Structure
 
 ```text
 ├── backend/
-│   ├── prisma/             # Database schemas & migrations
+│   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── migrations/
+│   │
 │   ├── src/
-│   │   ├── controllers/    # API Request handlers
-│   │   ├── middlewares/    # Authentication & admin filters
-│   │   ├── repositories/   # Prisma query layer
-│   │   └── services/       # Business logic layer
+│   │   ├── controllers/
+│   │   ├── middlewares/
+│   │   ├── repositories/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── tests/
+│   │   └── app.js
+│   │
 │   └── package.json
-└── frontend/
-    ├── src/
-    │   ├── components/     # Route guards and navigation
-    │   ├── context/        # Token & session auth context
-    │   ├── pages/          # Home, Admin, Login, and Register views
-    │   └── services/       # Axios API integration
-    ├── vercel.json         # Vercel SPA routing rewrites
-    └── package.json
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── tests/
+│   │   └── App.jsx
+│   │
+│   ├── vercel.json
+│   └── package.json
+│
+├── screenshots/
+│   ├── home.png
+│   ├── admin-dashboard.png
+│   ├── login.png
+│   └── register.png
+│
+├── README.md
+├── PROMPTS.md
+└── .gitignore
 ```
 
 ---
 
-## Setup and Installation
+## 🌐 API Endpoints
 
-### 1. Database Setup
-The backend requires a PostgreSQL database. You can host one locally or on the cloud (e.g., [Neon.tech](https://neon.tech/)):
-1. Create a PostgreSQL database.
-2. Note down the connection URL string:
-   `postgresql://<username>:<password>@<host>:<port>/<dbname>?sslmode=require`
+### Authentication
 
-### 2. Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the `backend/` directory:
-   ```env
-   PORT=5000
-   DATABASE_URL="YOUR_POSTGRESQL_CONNECTION_STRING"
-   JWT_SECRET="YOUR_SECURE_JWT_SECRET_KEY"
-   ```
-4. Push the schema to initialize tables:
-   ```bash
-   npx prisma db push
-   ```
-5. Start the backend:
-   ```bash
-   npm start
-   ```
-   *(Running on `http://localhost:5000`)*
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login user |
 
-### 3. Frontend Setup
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the `frontend/` directory:
-   ```env
-   VITE_API_URL=http://localhost:5000
-   ```
-4. Start the frontend:
-   ```bash
-   npm run dev
-   ```
-   *(Running on `http://localhost:5173`)*
+### Vehicles
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/vehicles` | Get all vehicles |
+| GET | `/api/vehicles/search` | Search vehicles |
+| POST | `/api/vehicles` | Add vehicle |
+| PUT | `/api/vehicles/:id` | Update vehicle |
+| DELETE | `/api/vehicles/:id` | Delete vehicle |
+| POST | `/api/vehicles/:id/purchase` | Purchase vehicle |
+| POST | `/api/vehicles/:id/restock` | Restock vehicle |
 
 ---
 
-## Test Suite Report
+## ⚙️ Setup and Installation
 
-All features were developed under a strict Test-Driven Development (TDD) cycle. The application has **100% passing tests** covering protected routing, auth context, form submits, and search filters.
+### 1. Database Setup
 
-Run the test suite using:
+The backend requires a PostgreSQL database.
+
+You can use PostgreSQL locally or a cloud-hosted database such as **Neon**.
+
+1. Create a PostgreSQL database.
+2. Obtain the database connection string.
+
+Example:
+
+```text
+postgresql://username:password@host:5432/database?sslmode=require
+```
+
+---
+
+### 2. Backend Setup
+
+Navigate to the backend folder.
+
+```bash
+cd backend
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Create a `.env` file.
+
+```env
+PORT=5000
+DATABASE_URL="YOUR_DATABASE_URL"
+JWT_SECRET="YOUR_SECRET_KEY"
+```
+
+Push the Prisma schema.
+
+```bash
+npx prisma db push
+```
+
+(Optional) Open Prisma Studio.
+
+```bash
+npx prisma studio
+```
+
+Start the backend.
+
+```bash
+npm start
+```
+
+Backend runs on:
+
+```text
+http://localhost:5000
+```
+
+---
+
+### 3. Frontend Setup
+
+Navigate to the frontend.
+
+```bash
+cd frontend
+```
+
+Install dependencies.
+
+```bash
+npm install
+```
+
+Create `.env`.
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+Run the frontend.
+
+```bash
+npm run dev
+```
+
+Frontend runs on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+## 🏗 Application Workflow
+
+```text
+User
+   │
+   ▼
+React Frontend
+   │
+Axios
+   │
+Express REST API
+   │
+Service Layer
+   │
+Repository Layer
+   │
+Prisma ORM
+   │
+PostgreSQL
+```
+
+Authentication Flow
+
+```text
+JWT Token
+      │
+      ▼
+Protected Routes
+      │
+      ▼
+Admin Dashboard
+```
+
+---
+
+## 🧪 Test Suite
+
+The project was developed using **Test-Driven Development (TDD)**.
+
+Frontend tests cover:
+
+- Authentication
+- Route Protection
+- Navbar
+- Vehicle Listing
+- Search Filters
+- Purchase Flow
+- Admin Dashboard
+- CRUD Operations
+
+Run the frontend tests.
+
 ```bash
 cd frontend
 npm run test:run
 ```
 
-### Test Execution Output:
+Example output:
+
 ```text
- RUN  v4.1.10 C:/Users/nadiy/OneDrive/Desktop/car-dealership/frontend
+✓ AdminProtectedRoute.test.jsx
+✓ AdminDashboard.test.jsx
+✓ Home.test.jsx
+✓ Login.test.jsx
+✓ Register.test.jsx
+✓ Navbar.test.jsx
+✓ ProtectedRoute.test.jsx
+✓ AuthContext.test.jsx
 
- ✓ src/tests/components/AdminProtectedRoute.test.jsx (3 tests) 162ms
- ✓ src/tests/pages/AdminDashboard.test.jsx (5 tests) 2222ms
-     ✓ allows admin to add a new vehicle  1278ms
-     ✓ allows admin to edit a vehicle  375ms
- ✓ src/tests/pages/Login.test.jsx (4 tests) 3195ms
-     ✓ should call login service with entered credentials  1203ms
-     ✓ should store token after successful login  680ms
-     ✓ should navigate to home after successful login  670ms
-     ✓ should display error message on login failure  637ms
- ✓ src/tests/pages/Home.test.jsx (7 tests) 1920ms
-     ✓ should call searchVehicles service and render filtered results when user searches  1008ms
-     ✓ should filter results by min and max price range  418ms
- ✓ src/tests/pages/Register.test.jsx (1 test) 1325ms
-     ✓ should call register service and navigate to login on success  1326ms
- ✓ src/tests/components/Navbar.test.jsx (4 tests) 634ms
-     ✓ displays Home, Login, and Register links when unauthenticated  437ms
- ✓ src/tests/components/ProtectedRoute.test.jsx (1 test) 84ms
- ✓ src/tests/context/AuthContext.test.jsx (3 tests) 38ms
-
- Test Files  8 passed (8)
-      Tests  28 passed (28)
+Test Files  8 passed
+Tests       28 passed
 ```
 
 ---
 
-## My AI Usage
+## 🔴🟢 Development Approach
 
-### 1. How AI was used to write code
-- **TDD Workflow**: The AI assistant helped write failing tests first (RED phase) for price filters, username validation, route guards, and UI renders. Once committed, the minimal clean code was written to satisfy those assertions (GREEN phase).
-- **Security Audit**: Staged and untracked the `backend/.env` configuration from Git tracking index to ensure cloud database credentials were not pushed to public repositories.
-- **Redesign & Refactoring**: Streamlined the layout to replicate modern, usable dealer portals (AutoTrader/Cars24) by crafting inline search grid structures, category-specific SVGs, and adding delete confirmations.
+The project followed a strict **Test-Driven Development (TDD)** workflow.
 
-### 2. Prompts Used
-- *\"I want a feature of searching by price also and I will commit about red and green using TDD\"*
-- *\"Redesign the frontend UI of this Car Dealership Inventory System to look like a clean, practical automotive inventory marketplace inspired by AutoTrader and Cars24—not a startup landing page.\"*
-- *\"Refine home layout: reduce hero height, format price in rupee notation with commas, and render different silhouettes by category.\"*
-- *\"Add delete confirmation prompt on admin panel, compact row heights, and title-case labels.\"*
-- *\"I want to deploy it on Vercel and Render, please provide deployment setup.\"*
+Each feature was implemented using the following cycle:
 
-For the full detailed prompt log, check the root folder's **`PROMPTS.md`** file.
+1. Write a failing test (RED)
+2. Commit the failing test
+3. Implement the minimum code required
+4. Commit the working implementation (GREEN)
+5. Repeat for the next feature
+
+This ensured every feature was backed by automated tests before implementation.
+
+---
+
+## 🤖 AI Usage
+
+### How AI was Used
+
+AI was used as a development assistant throughout the project.
+
+It assisted with:
+
+- Generating TDD test cases.
+- Reviewing application architecture.
+- Suggesting UI improvements.
+- Refactoring React components.
+- Explaining implementation approaches.
+- Reviewing API design.
+- Identifying potential issues.
+- Deployment guidance.
+
+All generated suggestions were manually reviewed, integrated, tested, and verified before being committed.
+
+---
+
+### Example Prompts
+
+- "I want a feature of searching by price also and I will commit about red and green using TDD."
+- "Redesign the frontend UI of this Car Dealership Inventory System to look like a clean automotive inventory marketplace."
+- "Refine the home layout, reduce hero height, format prices using Indian Rupee notation, and improve vehicle cards."
+- "Improve the admin dashboard UI while keeping all functionality unchanged."
+- "Help deploy the frontend on Vercel and backend on Render."
+
+For the complete prompt history, see **PROMPTS.md**.
+
+---
+
+## 📌 Future Improvements
+
+- Vehicle image uploads.
+- Pagination.
+- Sorting by price and category.
+- User purchase history.
+- Vehicle details page.
+- Email notifications.
+- Docker support.
+- CI/CD pipeline.
+
+---
+
+## 📄 License
+
+This project was developed as part of the **Incubyte TDD Assessment** for educational and evaluation purposes.
