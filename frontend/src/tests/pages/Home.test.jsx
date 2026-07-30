@@ -83,12 +83,12 @@ describe("Home Page - Vehicle Listing & Search", () => {
         await waitFor(() => {
             expect(screen.getByText("Toyota Corolla")).toBeInTheDocument();
             expect(screen.getByText("Category: Sedan")).toBeInTheDocument();
-            expect(screen.getByText("$20000")).toBeInTheDocument();
+            expect(screen.getByText("₹20000")).toBeInTheDocument();
             expect(screen.getByText("In Stock: 5")).toBeInTheDocument();
 
             expect(screen.getByText("Ford Mustang")).toBeInTheDocument();
             expect(screen.getByText("Category: Sports")).toBeInTheDocument();
-            expect(screen.getByText("$45000")).toBeInTheDocument();
+            expect(screen.getByText("₹45000")).toBeInTheDocument();
             expect(screen.getByText("In Stock: 2")).toBeInTheDocument();
         });
     });

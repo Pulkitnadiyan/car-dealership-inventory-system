@@ -53,7 +53,7 @@ describe("Admin Dashboard Page", () => {
         expect(await screen.findByText("Toyota")).toBeInTheDocument();
         expect(screen.getByText("Corolla")).toBeInTheDocument();
         expect(screen.getByText("Sedan")).toBeInTheDocument();
-        expect(screen.getByText("$20000")).toBeInTheDocument();
+        expect(screen.getByText("₹20000")).toBeInTheDocument();
         expect(screen.getByText("5")).toBeInTheDocument();
     });
 

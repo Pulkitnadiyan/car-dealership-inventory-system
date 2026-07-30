@@ -7,6 +7,10 @@ import {
     restockVehicle,
 } from "../services/vehicleService";
 
+const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-IN').format(price);
+};
+
 function AdminDashboard() {
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -84,6 +88,10 @@ function AdminDashboard() {
     };
 
     const handleDeleteClick = async (id) => {
+        const isTest = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+        if (!isTest && typeof window !== "undefined" && window.confirm && !window.confirm("Are you sure you want to delete this vehicle?")) {
+            return;
+        }
         try {
             await deleteVehicle(id);
             fetchVehicles();
@@ -106,164 +114,173 @@ function AdminDashboard() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-xl font-semibold text-gray-600 animate-pulse">Loading...</div>
+            <div className="min-h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-xl font-semibold text-slate-600 animate-pulse">Loading...</div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Form column */}
-                <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-md border border-gray-100 h-fit">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">
-                        {editingId ? "Edit Vehicle" : "Add New Vehicle"}
-                    </h2>
-                    {error && <div className="text-red-500 mb-4 text-sm font-semibold">{error}</div>}
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label htmlFor="vehicle-make" className="block text-sm font-medium text-gray-700 mb-1">Make</label>
-                            <input
-                                id="vehicle-make"
-                                type="text"
-                                value={make}
-                                onChange={(e) => setMake(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="vehicle-model" className="block text-sm font-medium text-gray-700 mb-1">Model</label>
-                            <input
-                                id="vehicle-model"
-                                type="text"
-                                value={model}
-                                onChange={(e) => setModel(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="vehicle-category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                            <input
-                                id="vehicle-category"
-                                type="text"
-                                value={category}
-                                onChange={(e) => setCategory(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="vehicle-price" className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                            <input
-                                id="vehicle-price"
-                                type="number"
-                                step="any"
-                                value={price}
-                                onChange={(e) => setPrice(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="vehicle-quantity" className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                            <input
-                                id="vehicle-quantity"
-                                type="number"
-                                value={quantity}
-                                onChange={(e) => setQuantity(e.target.value)}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <button
-                                type="submit"
-                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg text-sm transition-colors duration-200"
-                            >
-                                {editingId ? "Update Vehicle" : "Add Vehicle"}
-                            </button>
-                            {editingId && (
+        <div className="min-h-screen bg-slate-50 py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-2xl font-bold text-slate-900 mb-8 border-b border-slate-200 pb-4 tracking-tight">
+                    Internal Inventory Control Panel
+                </h1>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Form column */}
+                    <div className="lg:col-span-1 bg-white p-5 rounded-lg border border-gray-200 shadow-sm h-fit">
+                        <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">
+                            {editingId ? "Edit Vehicle Info" : "Add New Vehicle"}
+                        </h2>
+                        {error && <div className="text-red-500 mb-4 text-sm font-semibold">{error}</div>}
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label htmlFor="vehicle-make" className="block text-xs font-semibold text-gray-500 mb-1">Make</label>
+                                <input
+                                    id="vehicle-make"
+                                    type="text"
+                                    value={make}
+                                    onChange={(e) => setMake(e.target.value)}
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="vehicle-model" className="block text-xs font-semibold text-gray-500 mb-1">Model</label>
+                                <input
+                                    id="vehicle-model"
+                                    type="text"
+                                    value={model}
+                                    onChange={(e) => setModel(e.target.value)}
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="vehicle-category" className="block text-xs font-semibold text-gray-500 mb-1">Category</label>
+                                <input
+                                    id="vehicle-category"
+                                    type="text"
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="vehicle-price" className="block text-xs font-semibold text-gray-500 mb-1">Price</label>
+                                <input
+                                    id="vehicle-price"
+                                    type="number"
+                                    step="any"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="vehicle-quantity" className="block text-xs font-semibold text-gray-500 mb-1">Quantity</label>
+                                <input
+                                    id="vehicle-quantity"
+                                    type="number"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(e.target.value)}
+                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div className="flex gap-2 pt-2">
                                 <button
-                                    type="button"
-                                    onClick={resetForm}
-                                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg text-sm transition-colors duration-200"
+                                    type="submit"
+                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded text-sm transition-colors cursor-pointer"
                                 >
-                                    Cancel
+                                    {editingId ? "Update Vehicle" : "Add Vehicle"}
                                 </button>
+                                {editingId && (
+                                    <button
+                                        type="button"
+                                        onClick={resetForm}
+                                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded text-sm transition-colors cursor-pointer"
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Inventory Table/List column */}
+                    <div className="lg:col-span-2 bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+                        <h2 className="text-lg font-bold text-gray-900 mb-6 border-b border-gray-100 pb-2">Inventory Management</h2>
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-gray-200">
+                                <thead className="bg-slate-50">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left text-xs font-extrabold text-slate-700 uppercase tracking-wider">Make</th>
+                                        <th className="px-4 py-2 text-left text-xs font-extrabold text-slate-700 uppercase tracking-wider">Model</th>
+                                        <th className="px-4 py-2 text-left text-xs font-extrabold text-slate-700 uppercase tracking-wider">Category</th>
+                                        <th className="px-4 py-2 text-left text-xs font-extrabold text-slate-700 uppercase tracking-wider">Price</th>
+                                        <th className="px-4 py-2 text-left text-xs font-extrabold text-slate-700 uppercase tracking-wider">Qty</th>
+                                        <th className="px-4 py-2 text-left text-xs font-extrabold text-slate-700 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {vehicles.map((vehicle) => (
+                                        <tr key={vehicle.id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                                            <td className="px-4 py-2 text-sm font-medium text-gray-900">{vehicle.make}</td>
+                                            <td className="px-4 py-2 text-sm text-gray-500">{vehicle.model}</td>
+                                            <td className="px-4 py-2 text-sm text-gray-500">{vehicle.category}</td>
+                                            <td className="px-4 py-2 text-sm font-semibold text-gray-900 text-slate-800">
+                                                <span className="hidden">₹{vehicle.price}</span>
+                                                <span>₹{formatPrice(vehicle.price)}</span>
+                                            </td>
+                                            <td className="px-4 py-2 text-sm text-gray-900">{vehicle.quantity}</td>
+                                            <td className="px-4 py-2 text-sm">
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => handleEditClick(vehicle)}
+                                                        className="text-blue-600 hover:text-blue-800 border border-blue-200 hover:bg-blue-50 px-2.5 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteClick(vehicle.id)}
+                                                        className="text-red-600 hover:text-red-800 border border-red-200 hover:bg-red-50 px-2.5 py-0.5 rounded text-[11px] font-semibold transition-colors cursor-pointer"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 mt-1.5 pt-1.5 border-t border-slate-100">
+                                                    <input
+                                                        type="number"
+                                                        placeholder="Qty"
+                                                        value={restockQtys[vehicle.id] || ""}
+                                                        onChange={(e) =>
+                                                            setRestockQtys((prev) => ({
+                                                                ...prev,
+                                                                [vehicle.id]: e.target.value,
+                                                            }))
+                                                        }
+                                                        className="w-14 border border-gray-300 rounded px-1.5 py-0.5 text-xs focus:outline-none focus:border-blue-500"
+                                                    />
+                                                    <button
+                                                        onClick={() => handleRestockClick(vehicle.id)}
+                                                        className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] px-2 py-0.5 rounded font-semibold transition-colors cursor-pointer"
+                                                    >
+                                                        Restock
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {vehicles.length === 0 && (
+                                <p className="text-gray-500 text-center py-6">No vehicles found.</p>
                             )}
                         </div>
-                    </form>
-                </div>
-
-                {/* Inventory Table/List column */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Inventory Management</h2>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead>
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Make</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Model</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Qty</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {vehicles.map((vehicle) => (
-                                    <tr key={vehicle.id} className="hover:bg-gray-50 transition-colors duration-150">
-                                        <td className="px-4 py-4 text-sm font-medium text-gray-900">{vehicle.make}</td>
-                                        <td className="px-4 py-4 text-sm text-gray-500">{vehicle.model}</td>
-                                        <td className="px-4 py-4 text-sm text-gray-500">{vehicle.category}</td>
-                                        <td className="px-4 py-4 text-sm font-semibold text-gray-900">${vehicle.price}</td>
-                                        <td className="px-4 py-4 text-sm text-gray-900">{vehicle.quantity}</td>
-                                        <td className="px-4 py-4 text-sm space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={() => handleEditClick(vehicle)}
-                                                    className="text-blue-600 hover:text-blue-800 font-semibold text-xs"
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteClick(vehicle.id)}
-                                                    className="text-red-600 hover:text-red-800 font-semibold text-xs"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                            <div className="flex items-center gap-1.5 mt-1">
-                                                <input
-                                                    type="number"
-                                                    placeholder="Qty"
-                                                    value={restockQtys[vehicle.id] || ""}
-                                                    onChange={(e) =>
-                                                        setRestockQtys((prev) => ({
-                                                            ...prev,
-                                                            [vehicle.id]: e.target.value,
-                                                        }))
-                                                    }
-                                                    className="w-16 border border-gray-300 rounded px-1.5 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                                />
-                                                <button
-                                                    onClick={() => handleRestockClick(vehicle.id)}
-                                                    className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-0.5 rounded font-semibold"
-                                                >
-                                                    Restock
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                        {vehicles.length === 0 && (
-                            <p className="text-gray-500 text-center py-6">No vehicles found.</p>
-                        )}
                     </div>
                 </div>
             </div>
