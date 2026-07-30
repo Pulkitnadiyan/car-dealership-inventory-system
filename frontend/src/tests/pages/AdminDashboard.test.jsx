@@ -67,6 +67,9 @@ describe("Admin Dashboard Page", () => {
             </MemoryRouter>
         );
 
+        // Wait for loading to finish and form to appear
+        await screen.findByRole("heading", { name: /add new vehicle/i });
+
         // Fill Add Vehicle form
         await userEvent.type(screen.getByLabelText(/make/i), "Honda");
         await userEvent.type(screen.getByLabelText(/model/i), "Civic");
