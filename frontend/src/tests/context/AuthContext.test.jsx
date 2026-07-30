@@ -22,5 +22,21 @@ describe("AuthContext", () => {
         expect(result.current.token).toBe("jwt-token");
 
     });
+    it("should initialize token from localStorage", () => {
+
+        Storage.prototype.getItem = vi.fn(() => "stored-token");
+
+        const wrapper = ({ children }) => (
+            <AuthProvider>{children}</AuthProvider>
+        );
+
+        const { result } = renderHook(
+            () => useAuth(),
+            { wrapper }
+        );
+
+        expect(result.current.token).toBe("stored-token");
+
+    });
 
 });
