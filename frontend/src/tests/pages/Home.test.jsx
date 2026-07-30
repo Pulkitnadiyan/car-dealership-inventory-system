@@ -3,23 +3,27 @@ import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Home from "../../pages/Home";
-import { getVehicles, searchVehicles } from "../../services/vehicleService";
+import { getVehicles, searchVehicles, purchaseVehicle } from "../../services/vehicleService";
+import { useAuth } from "../../context/AuthContext";
 
 vi.mock("../../services/vehicleService", () => ({
     getVehicles: vi.fn(),
     searchVehicles: vi.fn(),
+    purchaseVehicle: vi.fn(),
 }));
 
 vi.mock("../../context/AuthContext", () => ({
-    useAuth: vi.fn(() => ({
-        token: null,
-        logout: vi.fn(),
-    })),
+    useAuth: vi.fn(),
 }));
 
 describe("Home Page - Vehicle Listing & Search", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        // Default unauthenticated
+        useAuth.mockReturnValue({
+            token: null,
+            logout: vi.fn(),
+        });
     });
 
     it("displays loading state while fetching vehicles", async () => {
@@ -139,6 +143,76 @@ describe("Home Page - Vehicle Listing & Search", () => {
 
         await waitFor(() => {
             expect(screen.getByText("Toyota Corolla")).toBeInTheDocument();
+        });
+    });
+
+    it("does not render Purchase button when user is unauthenticated", async () => {
+        const dummyVehicles = [
+            {
+                id: 1,
+                make: "Toyota",
+                model: "Corolla",
+                category: "Sedan",
+                price: 20000,
+                quantity: 5,
+            },
+        ];
+        getVehicles.mockResolvedValue({ data: dummyVehicles });
+
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota Corolla");
+        expect(screen.queryByRole("button", { name: /purchase/i })).not.toBeInTheDocument();
+    });
+
+    it("renders Purchase button and updates stock on click when user is authenticated", async () => {
+        // Authenticate user
+        useAuth.mockReturnValue({
+            token: "valid-jwt-token",
+            logout: vi.fn(),
+        });
+
+        const dummyVehicles = [
+            {
+                id: 1,
+                make: "Toyota",
+                model: "Corolla",
+                category: "Sedan",
+                price: 20000,
+                quantity: 5,
+            },
+        ];
+        getVehicles.mockResolvedValue({ data: dummyVehicles });
+        purchaseVehicle.mockResolvedValue({
+            data: {
+                id: 1,
+                make: "Toyota",
+                model: "Corolla",
+                category: "Sedan",
+                price: 20000,
+                quantity: 4, // updated quantity
+            }
+        });
+
+        render(
+            <MemoryRouter>
+                <Home />
+            </MemoryRouter>
+        );
+
+        await screen.findByText("Toyota Corolla");
+        const purchaseBtn = screen.getByRole("button", { name: /purchase/i });
+        expect(purchaseBtn).toBeInTheDocument();
+
+        await userEvent.click(purchaseBtn);
+
+        expect(purchaseVehicle).toHaveBeenCalledWith(1);
+        await waitFor(() => {
+            expect(screen.getByText("In Stock: 4")).toBeInTheDocument();
         });
     });
 });

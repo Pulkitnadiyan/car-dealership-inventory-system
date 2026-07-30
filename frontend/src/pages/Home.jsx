@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { getVehicles, searchVehicles } from "../services/vehicleService";
+import { getVehicles, searchVehicles, purchaseVehicle } from "../services/vehicleService";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
+    const { token } = useAuth();
     const [vehicles, setVehicles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -42,6 +44,18 @@ function Home() {
             setError("Failed to load vehicles");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handlePurchase = async (id) => {
+        try {
+            const response = await purchaseVehicle(id);
+            const updatedVehicle = response.data;
+            setVehicles((prev) =>
+                prev.map((v) => (v.id === id ? updatedVehicle : v))
+            );
+        } catch (err) {
+            // Silence or handle locally
         }
     };
 
@@ -119,8 +133,8 @@ function Home() {
                 ) : (
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {vehicles.map((vehicle) => (
-                            <div key={vehicle.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300">
-                                <div className="p-6">
+                            <div key={vehicle.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between">
+                                <div className="p-6 flex-1">
                                     <h2 className="text-xl font-bold text-gray-900 mb-2">
                                         {vehicle.make} {vehicle.model}
                                     </h2>
@@ -134,6 +148,17 @@ function Home() {
                                         </span>
                                     </div>
                                 </div>
+                                {token && (
+                                    <div className="px-6 pb-6">
+                                        <button
+                                            onClick={() => handlePurchase(vehicle.id)}
+                                            disabled={vehicle.quantity <= 0}
+                                            className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-2 rounded-lg text-sm transition-colors duration-200"
+                                        >
+                                            Purchase
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
