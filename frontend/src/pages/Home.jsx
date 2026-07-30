@@ -11,6 +11,8 @@ function Home() {
     const [makeQuery, setMakeQuery] = useState("");
     const [modelQuery, setModelQuery] = useState("");
     const [categoryQuery, setCategoryQuery] = useState("");
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
 
     const fetchInitialVehicles = async () => {
         try {
@@ -38,7 +40,16 @@ function Home() {
                 model: modelQuery,
                 category: categoryQuery,
             });
-            setVehicles(response.data || []);
+            let results = response.data || [];
+
+            if (minPrice) {
+                results = results.filter((v) => v.price >= parseFloat(minPrice));
+            }
+            if (maxPrice) {
+                results = results.filter((v) => v.price <= parseFloat(maxPrice));
+            }
+
+            setVehicles(results);
             setError(null);
         } catch (err) {
             setError("Failed to load vehicles");
@@ -83,46 +94,72 @@ function Home() {
                 </h1>
 
                 {/* Search Bar */}
-                <form onSubmit={handleSearch} className="bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-8 flex flex-col md:flex-row md:items-end gap-4">
-                    <div className="flex-1">
-                        <label htmlFor="search-make" className="block text-sm font-medium text-gray-700 mb-1">Make</label>
-                        <input
-                            id="search-make"
-                            type="text"
-                            placeholder="Search by Make"
-                            value={makeQuery}
-                            onChange={(e) => setMakeQuery(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                <form onSubmit={handleSearch} className="bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-8 flex flex-col gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div>
+                            <label htmlFor="search-make" className="block text-sm font-medium text-gray-700 mb-1">Make</label>
+                            <input
+                                id="search-make"
+                                type="text"
+                                placeholder="Search by Make"
+                                value={makeQuery}
+                                onChange={(e) => setMakeQuery(e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="search-model" className="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                            <input
+                                id="search-model"
+                                type="text"
+                                placeholder="Search by Model"
+                                value={modelQuery}
+                                onChange={(e) => setModelQuery(e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="search-category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <input
+                                id="search-category"
+                                type="text"
+                                placeholder="Search by Category"
+                                value={categoryQuery}
+                                onChange={(e) => setCategoryQuery(e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="search-min-price" className="block text-sm font-medium text-gray-700 mb-1">Min Price</label>
+                            <input
+                                id="search-min-price"
+                                type="number"
+                                placeholder="Min Price"
+                                value={minPrice}
+                                onChange={(e) => setMinPrice(e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="search-max-price" className="block text-sm font-medium text-gray-700 mb-1">Max Price</label>
+                            <input
+                                id="search-max-price"
+                                type="number"
+                                placeholder="Max Price"
+                                value={maxPrice}
+                                onChange={(e) => setMaxPrice(e.target.value)}
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <label htmlFor="search-model" className="block text-sm font-medium text-gray-700 mb-1">Model</label>
-                        <input
-                            id="search-model"
-                            type="text"
-                            placeholder="Search by Model"
-                            value={modelQuery}
-                            onChange={(e) => setModelQuery(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg text-sm transition-colors duration-200"
+                        >
+                            Search
+                        </button>
                     </div>
-                    <div className="flex-1">
-                        <label htmlFor="search-category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <input
-                            id="search-category"
-                            type="text"
-                            placeholder="Search by Category"
-                            value={categoryQuery}
-                            onChange={(e) => setCategoryQuery(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg text-sm transition-colors duration-200"
-                    >
-                        Search
-                    </button>
                 </form>
 
                 {/* Listing grid */}

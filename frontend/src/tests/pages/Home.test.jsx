@@ -245,6 +245,7 @@ describe("Home Page - Vehicle Listing & Search", () => {
         ];
 
         getVehicles.mockResolvedValue({ data: dummyVehicles });
+        searchVehicles.mockResolvedValue({ data: dummyVehicles });
 
         render(
             <MemoryRouter>
