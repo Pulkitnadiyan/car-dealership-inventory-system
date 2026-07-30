@@ -11,12 +11,19 @@ export function AuthProvider({ children }) {
     const login = (jwt) => {
         setToken(jwt);
     };
+    const logout = () => {
+        localStorage.removeItem("token");
+        setToken(null);
+    };
+
+
 
     return (
         <AuthContext.Provider
             value={{
                 token,
-                login
+                login,
+                logout
             }}
         >
             {children}
