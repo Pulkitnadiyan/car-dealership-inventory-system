@@ -41,4 +41,40 @@ describe("Login Page", () => {
 
     });
 
+    it("should store token after successful login", async () => {
+
+        loginUser.mockResolvedValue({
+            data: {
+                token: "jwt-token"
+            }
+        });
+
+        Storage.prototype.setItem = vi.fn();
+
+        render(
+            <BrowserRouter>
+                <Login />
+            </BrowserRouter>
+        );
+
+        await userEvent.type(
+            screen.getByLabelText(/email/i),
+            "pulkit@example.com"
+        );
+
+        await userEvent.type(
+            screen.getByLabelText(/password/i),
+            "password123"
+        );
+
+        await userEvent.click(
+            screen.getByRole("button", { name: /login/i })
+        );
+
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+            "token",
+            "jwt-token"
+        );
+
+    });
 });
