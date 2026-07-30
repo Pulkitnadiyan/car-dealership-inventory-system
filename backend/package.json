@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "build": "prisma generate",
+    "build": "node node_modules/prisma/build/index.js generate",
     "test": "jest --runInBand",
     "test:watch": "jest --watch"
   },
