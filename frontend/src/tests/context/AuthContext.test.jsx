@@ -38,5 +38,32 @@ describe("AuthContext", () => {
         expect(result.current.token).toBe("stored-token");
 
     });
+    it("should clear token on logout", () => {
+
+        Storage.prototype.removeItem = vi.fn();
+
+        const wrapper = ({ children }) => (
+            <AuthProvider>{children}</AuthProvider>
+        );
+
+        const { result } = renderHook(
+            () => useAuth(),
+            { wrapper }
+        );
+
+        act(() => {
+            result.current.login("jwt-token");
+        });
+
+        act(() => {
+            result.current.logout();
+        });
+
+        expect(result.current.token).toBeNull();
+
+        expect(localStorage.removeItem)
+            .toHaveBeenCalledWith("token");
+
+    });
 
 });
